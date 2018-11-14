@@ -4,7 +4,7 @@ import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class ParentSelector {
-    public List<Byte[]> select(Population population, int count, int type) throws GAException {
+    public List<Individual> select(Population population, int count, int type) throws GAException {
         switch (type) {
             case 0:
                 return select0(population, count);
@@ -20,19 +20,19 @@ public class ParentSelector {
         }
     }
 
-    private List<Byte[]> select01(Population population, int count, boolean notRepeat) {
+    private List<Individual> select01(Population population, int count, boolean notRepeat) {
         List<Integer> rank = new ArrayList<>();
-        Map<Integer, Byte[]> genoms = new HashMap<>();
+        Map<Integer, Individual> genoms = new HashMap<>();
         int sum = 0;
         int number = 0;
         for (Individual i : population.getPopulation()) {
             sum += i.calcFitness();
             rank.add(sum);
-            genoms.put(number, i.getGenom());
+            genoms.put(number, i);
             number++;
         }
         List<Integer> prevIndexes = new ArrayList<>();
-        List<Byte[]> parents = new ArrayList<>();
+        List<Individual> parents = new ArrayList<>();
         for (int k = 0; k < count; k++) {
             int index = Collections.binarySearch(rank, ThreadLocalRandom.current().nextInt(0, sum + 1));
             if (index < 0) {
@@ -52,30 +52,30 @@ public class ParentSelector {
         return parents;
     }
 
-    private List<Byte[]> select0(Population population, int count) {
+    private List<Individual> select0(Population population, int count) {
         return select01(population, count, false);
     }
 
-    private List<Byte[]> select1(Population population, int count) {
+    private List<Individual> select1(Population population, int count) {
         return select01(population, count, true);
     }
 
-    private List<Byte[]> select2(Population population, int count) {
-        List<Byte[]> parents = new ArrayList<>();
+    private List<Individual> select2(Population population, int count) {
+        List<Individual> parents = new ArrayList<>();
         Byte[] a = {0};
         for (int k = 0; k < count; k++) {
             List<Individual> temp = new ArrayList<>();
             for (int j = 0; j < population.getSize() / 10; j++) {
                 temp.add(population.getIndividual(ThreadLocalRandom.current().nextInt(population.getSize())));
             }
-            parents.add(temp.stream().max(Comparator.comparing(Individual::calcFitness)).map(Individual::getGenom).orElse(a));
+            parents.add(temp.stream().max(Comparator.comparing(Individual::calcFitness)).orElse(null));
         }
         return parents;
     }
 
-    private List<Byte[]> select3(Population population, int count) {
+    private List<Individual> select3(Population population, int count) {
         List<Integer> rank = new ArrayList<>();
-        Map<Integer, Byte[]> genoms = new HashMap<>();
+        Map<Integer, Individual> genoms = new HashMap<>();
         int sum = 0;
         int number = 0;
         int length = 0;
@@ -86,10 +86,10 @@ public class ParentSelector {
             }
             sum += length;
             rank.add(sum);
-            genoms.put(number, i.getGenom());
+            genoms.put(number, i);
             number++;
         }
-        List<Byte[]> parents = new ArrayList<>();
+        List<Individual> parents = new ArrayList<>();
         for (int k = 0; k < count; k++) {
             int index = Collections.binarySearch(rank, ThreadLocalRandom.current().nextInt(0, sum + 1));
             if (index < 0) {

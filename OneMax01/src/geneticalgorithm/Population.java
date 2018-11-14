@@ -39,6 +39,16 @@ public class Population {
         return fitness;
     }
 
+    public Population deleteConstant() {
+        List<Individual> ind = new ArrayList<>();
+        for (Individual i : population) {
+            if (i.canChanged()){
+                ind.add(i);
+            }
+        }
+        return new Population(ind);
+    }
+
     public Individual maximalFitness() {
         return population.stream().max(Comparator.comparing(Individual::calcFitness)).orElse(null);
     }
