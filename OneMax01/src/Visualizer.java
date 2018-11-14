@@ -54,27 +54,25 @@ public class Visualizer extends ApplicationFrame {
             ga.evalPopulation();
             generations = 1;
             while (!ga.isTerminated(50)) {
-                mutation.add(generations, ga.getPopulation().maximalFitness());
+                mutation.add(generations, ga.getMaximalFitness());
                 ga.mutation();
-                ga.evalPopulation();
                 generations++;
             }
             mutation.add(generations, 50);
         }
 
         final XYSeries crossover = new XYSeries( "Crossover with 0.5 ptobability" );
-        /*for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 5; i++) {
             ga = new GeneticAlgoritm(100, 50, 0, 0.5, 0, 1);
             ga.evalPopulation();
             generations = 1;
             while (!ga.isTerminated(50)) {
-                crossover.add(generations, ga.getPopulation().maximalFitness());
+                crossover.add(generations, ga.getMaximalFitness());
                 ga.crossover(1);
-                ga.evalPopulation();
                 generations++;
             }
             crossover.add(generations, 50);
-        }*/
+        }
 
         final XYSeries mutationAndCrossover = new XYSeries( "Mutation and one-point crossover" );
         for (int i = 0; i < 5; i++) {
@@ -82,9 +80,8 @@ public class Visualizer extends ApplicationFrame {
             ga.evalPopulation();
             generations = 1;
             while (!ga.isTerminated(50)) {
-                mutationAndCrossover.add(generations, ga.getPopulation().maximalFitness());
+                mutationAndCrossover.add(generations, ga.getMaximalFitness());
                 ga.crossoverAndMutation(0);
-                ga.evalPopulation();
                 generations++;
             }
             mutationAndCrossover.add(generations, 50);
@@ -96,9 +93,8 @@ public class Visualizer extends ApplicationFrame {
             ga.evalPopulation();
             generations = 1;
             while (!ga.isTerminated(50)) {
-                mutationAndCrossoverP.add(generations, ga.getPopulation().maximalFitness());
+                mutationAndCrossoverP.add(generations, ga.getMaximalFitness());
                 ga.crossoverAndMutation(1);
-                ga.evalPopulation();
                 generations++;
             }
             mutationAndCrossoverP.add(generations, 50);

@@ -37,8 +37,8 @@ public class Population {
         return fitness;
     }
 
-    public int maximalFitness() {
-        return population.stream().max(Comparator.comparing(Individual::calcFitness)).map(i -> i.calcFitness()).orElse(-1);
+    public Individual maximalFitness() {
+        return population.stream().max(Comparator.comparing(Individual::calcFitness)).orElse(null);
     }
 
     public List<Individual> getPopulation() {

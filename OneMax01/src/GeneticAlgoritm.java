@@ -10,9 +10,13 @@ public class GeneticAlgoritm {
     private ParentSelector pSelector = new ParentSelector();
     private SurvivalSelector sSelector = new SurvivalSelector();
     private int typeSelectionParents, typeSelectionSurvival;
+    private int maximalFitness;
+    private Individual maximalFitnessIndividual;
 
     public GeneticAlgoritm(int size, int length, int countOfPoint, double probabilityCrossover, int typeSelectionParents, int typeSelectionSurvival) {
         population = new Population(size, length);
+        maximalFitnessIndividual = population.maximalFitness();
+        maximalFitness = maximalFitnessIndividual.calcFitness();
         this.countOfPoint = countOfPoint;
         this.probabilityCrossover = probabilityCrossover;
         this.typeSelectionParents = typeSelectionParents;
@@ -20,7 +24,7 @@ public class GeneticAlgoritm {
     }
 
     public boolean isTerminated(int maxValue) {
-        return maxValue == population.maximalFitness();
+        return maxValue == maximalFitness;
     }
 
     public List<Integer> evalPopulation() {
@@ -31,6 +35,18 @@ public class GeneticAlgoritm {
         return population;
     }
 
+    public int getMaximalFitness() {
+        return maximalFitness;
+    }
+
+    private void updateMaximalFitness() {
+        Individual individual = population.maximalFitness();
+        if (individual.calcFitness() > maximalFitness) {
+            maximalFitness = individual.calcFitness();
+            maximalFitnessIndividual = individual;
+        }
+    }
+
     public void mutation() throws GAException {
         List<Individual> children = new ArrayList<>();
         for (Byte[] b : pSelector.select(population, population.getSize()/10, typeSelectionParents)) {
@@ -38,6 +54,8 @@ public class GeneticAlgoritm {
         }
         population = sSelector.select(population, children, typeSelectionSurvival);
         population.incrementAges();
+        evalPopulation();
+        updateMaximalFitness();
     }
 
     public void crossover(int type) throws GAException {
@@ -57,6 +75,8 @@ public class GeneticAlgoritm {
         }
         population = sSelector.select(population, children, typeSelectionSurvival);
         population.incrementAges();
+        evalPopulation();
+        updateMaximalFitness();
     }
 
     public void crossoverAndMutation(int type) throws GAException {
@@ -76,6 +96,8 @@ public class GeneticAlgoritm {
         }
         population = sSelector.select(population, children, typeSelectionSurvival);
         population.incrementAges();
+        evalPopulation();
+        updateMaximalFitness();
     }
 
     private Byte[] mutation(Byte[] genom) {

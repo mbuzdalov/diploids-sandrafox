@@ -39,7 +39,7 @@ public class Tester {
                 ga.evalPopulation();
                 int generations = 1;
                 while (!ga.isTerminated(50)) {
-                    //System.out.println(ga.getPopulation().maximalFitness());
+                    //System.out.println(ga.getMaximalFitness);
                     ga.crossoverAndMutation(1);
                     ga.evalPopulation();
                     generations++;
