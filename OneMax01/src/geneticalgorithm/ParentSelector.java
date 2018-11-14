@@ -1,4 +1,4 @@
-import com.sun.org.apache.bcel.internal.generic.POP;
+package geneticalgorithm;
 
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;

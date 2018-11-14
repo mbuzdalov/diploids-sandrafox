@@ -1,3 +1,5 @@
+package geneticalgorithm;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -21,8 +23,8 @@ public class Population {
         return population.get(number);
     }
 
-    /*public Population(List<Byte[]> values){
-        population = values.stream().map(v -> new Individual(v)).collect(Collectors.toList());
+    /*public geneticalgorithm.Population(List<Byte[]> values){
+        population = values.stream().map(v -> new geneticalgorithm.Individual(v)).collect(Collectors.toList());
     }*/
 
     public Population(List<Individual> individuals) {

@@ -1,3 +1,5 @@
+package geneticalgorithm;
+
 public class Individual {
     private Byte[] genom;
     private int fitness = -1;

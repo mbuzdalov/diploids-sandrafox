@@ -1,3 +1,5 @@
+package geneticalgorithm;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -12,6 +14,8 @@ public class GeneticAlgoritm {
     private int typeSelectionParents, typeSelectionSurvival;
     private int maximalFitness;
     private Individual maximalFitnessIndividual;
+    private double standardProbability;
+    private int length;
 
     public GeneticAlgoritm(int size, int length, int countOfPoint, double probabilityCrossover, int typeSelectionParents, int typeSelectionSurvival) {
         population = new Population(size, length);
@@ -21,6 +25,8 @@ public class GeneticAlgoritm {
         this.probabilityCrossover = probabilityCrossover;
         this.typeSelectionParents = typeSelectionParents;
         this.typeSelectionSurvival = typeSelectionSurvival;
+        standardProbability = 1 / length;
+        this.length = length;
     }
 
     public boolean isTerminated(int maxValue) {
@@ -45,6 +51,25 @@ public class GeneticAlgoritm {
             maximalFitness = individual.calcFitness();
             maximalFitnessIndividual = individual;
         }
+    }
+
+    public void standardBitMutation() throws GAException {
+        List<Individual> children = new ArrayList<>();
+        for (Byte[] b : pSelector.select(population, population.getSize()/10, typeSelectionParents)) {
+            Byte[] child = new Byte[b.length];
+            for (int i = 0; i < b.length; i++) {
+                if (Math.random() > standardProbability) {
+                    child[i] = (byte)(1 - b[i]);
+                } else {
+                    child[i] = b[i];
+                }
+            }
+            children.add(new Individual(child));
+        }
+        population = sSelector.select(population, children, typeSelectionSurvival);
+        population.incrementAges();
+        evalPopulation();
+        updateMaximalFitness();
     }
 
     public void mutation() throws GAException {

@@ -1,6 +1,4 @@
-import java.util.ArrayList;
-import java.util.List;
-import org.jfree.chart.*;
+package geneticalgorithm;
 
 public class Tester {
     public static void main(String[] args) {
@@ -8,7 +6,7 @@ public class Tester {
             //only mutation
             /*for (int i = 1; i <= 5; i++) {
                 System.out.println("Trying: " + i);
-                GeneticAlgoritm ga = new GeneticAlgoritm(100, 50, -1, 0, 3, 1);
+                geneticalgorithm.GeneticAlgoritm ga = new geneticalgorithm.GeneticAlgoritm(100, 50, -1, 0, 3, 1);
                 ga.evalPopulation();
                 int generations = 1;
                 while (!ga.isTerminated(50)) {
@@ -21,7 +19,7 @@ public class Tester {
             //one point crossover
             /*for (int i = 1; i <= 5; i++) {
                 System.out.println("Trying: " + i);
-                GeneticAlgoritm ga = new GeneticAlgoritm(100, 50, 0, 0.9, 3, 1);
+                geneticalgorithm.GeneticAlgoritm ga = new geneticalgorithm.GeneticAlgoritm(100, 50, 0, 0.9, 3, 1);
                 ga.evalPopulation();
                 int generations = 1;
                 while (!ga.isTerminated(50)) {
