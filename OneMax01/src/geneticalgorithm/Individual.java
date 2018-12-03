@@ -31,6 +31,7 @@ public class Individual {
     }
 
     public Individual(Byte[] value, boolean[] changed) {
+        genom = new Byte[value.length];
         System.arraycopy(value, 0, genom, 0, value.length);
         this.changed = new boolean[changed.length];
         countNotChanged = changed.length;
@@ -40,6 +41,7 @@ public class Individual {
             }
             this.changed[i] = changed[i];
         }
+        calcFitness();
     }
 
     public int calcFitness() {
@@ -63,6 +65,11 @@ public class Individual {
         changed[position] = true;
         countNotChanged--;
         genom[position] = (byte)(1 - genom[position]);
+        if (genom[position] == 0) {
+            fitness--;
+        } else {
+            fitness++;
+        }
         return true;
     }
 

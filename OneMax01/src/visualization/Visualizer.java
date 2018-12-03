@@ -57,57 +57,17 @@ public class Visualizer extends ApplicationFrame {
             ga.evalPopulation();
             generations = 1;
             while (!ga.isTerminated(50)) {
+                //System.out.println(ga.getMaximalFitness());
                 mutation.add(generations, ga.getMaximalFitness());
-                ga.mutation();
+                ga.randomLocalSearch();
                 generations++;
             }
+            System.out.println(generations);
             mutation.add(generations, 50);
-        }
-
-        final XYSeries crossover = new XYSeries( "Crossover with 0.5 ptobability" );
-        for (int i = 0; i < 5; i++) {
-            ga = new GeneticAlgoritm(100, 50, 0, 0.5, 0, 1);
-            ga.evalPopulation();
-            generations = 1;
-            while (!ga.isTerminated(50)) {
-                crossover.add(generations, ga.getMaximalFitness());
-                ga.crossover(1);
-                generations++;
-            }
-            crossover.add(generations, 50);
-        }
-
-        final XYSeries mutationAndCrossover = new XYSeries( "Mutation and one-point crossover" );
-        for (int i = 0; i < 5; i++) {
-            ga = new GeneticAlgoritm(100, 50, 1, 0.5, 2, 1);
-            ga.evalPopulation();
-            generations = 1;
-            while (!ga.isTerminated(50)) {
-                mutationAndCrossover.add(generations, ga.getMaximalFitness());
-                ga.crossoverAndMutation(0);
-                generations++;
-            }
-            mutationAndCrossover.add(generations, 50);
-        }
-
-        final XYSeries mutationAndCrossoverP = new XYSeries( "Mutation and 0.5 crossover" );
-        for (int i = 0; i < 5; i++) {
-            ga = new GeneticAlgoritm(100, 50, 1, 0.5, 2, 1);
-            ga.evalPopulation();
-            generations = 1;
-            while (!ga.isTerminated(50)) {
-                mutationAndCrossoverP.add(generations, ga.getMaximalFitness());
-                ga.crossoverAndMutation(1);
-                generations++;
-            }
-            mutationAndCrossoverP.add(generations, 50);
         }
 
         final XYSeriesCollection dataset = new XYSeriesCollection( );
         dataset.addSeries( mutation );
-        dataset.addSeries( crossover );
-        dataset.addSeries( mutationAndCrossover );
-        dataset.addSeries(mutationAndCrossoverP);
         return dataset;
     }
 
@@ -115,7 +75,7 @@ public class Visualizer extends ApplicationFrame {
         try {
             JFreeChart xylineChart = ChartFactory.createXYLineChart(
                     "Genetic Algorithms progress",
-                    "Category",
+                    "Generations",
                     "Score",
                     Visualizer.createDataset(),
                     PlotOrientation.VERTICAL,
@@ -123,7 +83,7 @@ public class Visualizer extends ApplicationFrame {
 
             int width = 1000;   /* Width of the image */
             int height = 800;  /* Height of the image */
-            File XYChart = new File( "Type2.jpeg" );
+            File XYChart = new File( "RLS1.jpeg" );
             ChartUtilities.saveChartAsJPEG( XYChart, xylineChart, width, height);
         } catch (GAException | IOException e) {
             System.out.println(e.getMessage());

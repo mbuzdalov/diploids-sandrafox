@@ -26,7 +26,7 @@ public class GeneticAlgoritm {
         this.probabilityCrossover = probabilityCrossover;
         this.typeSelectionParents = typeSelectionParents;
         this.typeSelectionSurvival = typeSelectionSurvival;
-        standardProbability = 1 / length;
+        standardProbability = 1 / (double)length;
         this.length = length;
     }
 
@@ -55,15 +55,20 @@ public class GeneticAlgoritm {
     }
 
     public void randomLocalSearch() throws GAException {
+        int size = population.getSize();
         List<Individual> children = new ArrayList<>();
-        for (Individual ind : pSelector.select(population.deleteConstant(), population.getSize()/10, typeSelectionParents)) {
+        population.deleteConstant();
+        for (Individual ind : pSelector.select(population, population.getSize()/10, typeSelectionParents)) {
+            Individual i = new Individual(ind.getGenom(), ind.getChanged());
             int index = ThreadLocalRandom.current().nextInt(length);
-            while (!ind.inverseGene(index)) {
+            while (!i.inverseGene(index)) {
                 index = ThreadLocalRandom.current().nextInt(length);
             }
-            children.add(ind);
+            if (i.calcFitness() >= ind.calcFitness()) {
+                children.add(i);
+            }
         }
-        population = sSelector.select(population, children, typeSelectionSurvival);
+        population = sSelector.select(population, children, typeSelectionSurvival, size);
         population.incrementAges();
         evalPopulation();
         updateMaximalFitness();
@@ -75,15 +80,18 @@ public class GeneticAlgoritm {
             Byte[] b = ind.getGenom();
             Byte[] child = new Byte[b.length];
             for (int i = 0; i < b.length; i++) {
-                if (Math.random() > standardProbability) {
+                if (Math.random() < standardProbability) {
                     child[i] = (byte)(1 - b[i]);
                 } else {
                     child[i] = b[i];
                 }
             }
-            children.add(new Individual(child, ind.getChanged()));
+            Individual i = new Individual(child, ind.getChanged());
+            if (i.calcFitness() > ind.calcFitness()) {
+                children.add(i);
+            }
         }
-        population = sSelector.select(population, children, typeSelectionSurvival);
+        population = sSelector.select(population, children, typeSelectionSurvival, population.getSize());
         population.incrementAges();
         evalPopulation();
         updateMaximalFitness();
@@ -94,7 +102,7 @@ public class GeneticAlgoritm {
         for (Individual ind : pSelector.select(population, population.getSize()/10, typeSelectionParents)) {
             children.add(new Individual(mutation(ind.getGenom()), ind.getChanged()));
         }
-        population = sSelector.select(population, children, typeSelectionSurvival);
+        population = sSelector.select(population, children, typeSelectionSurvival, population.getSize());
         population.incrementAges();
         evalPopulation();
         updateMaximalFitness();
@@ -116,7 +124,7 @@ public class GeneticAlgoritm {
                     throw new GAException("Sorry, " + type + " is incorrect type of crossoving");
             }
         }
-        population = sSelector.select(population, children, typeSelectionSurvival);
+        population = sSelector.select(population, children, typeSelectionSurvival, population.getSize());
         population.incrementAges();
         evalPopulation();
         updateMaximalFitness();
@@ -138,7 +146,7 @@ public class GeneticAlgoritm {
                     throw new GAException("Sorry, " + type + " is incorrect type of crossoving");
             }
         }
-        population = sSelector.select(population, children, typeSelectionSurvival);
+        population = sSelector.select(population, children, typeSelectionSurvival, population.getSize());
         population.incrementAges();
         evalPopulation();
         updateMaximalFitness();
