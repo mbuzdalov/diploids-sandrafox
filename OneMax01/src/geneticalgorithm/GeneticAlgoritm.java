@@ -1,5 +1,7 @@
 package geneticalgorithm;
 
+import org.ietf.jgss.GSSException;
+
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -54,11 +56,24 @@ public class GeneticAlgoritm {
         }
     }
 
+    public void greedyMGA() throws GAException {
+        List<Individual> parents = population.getMaximal(2);
+        Byte[] c = uniformCrossover(parents.stream().map(Individual::getGenom).collect(Collectors.toList()));
+        Byte[] z = SBM(c);
+        List<Individual> p = new ArrayList<>(population.getPopulation());
+        Individual i = new Individual(z, parents.get(0).getChanged());
+        if (!p.contains(i) && i.calcFitness() > p.get(p.size() - 1).calcFitness()) {
+            p.set(p.size() - 1, i);
+        }
+        population = new Population(p);
+        updateMaximalFitness();
+    }
+
     public void randomLocalSearch() throws GAException {
         int size = population.getSize();
         List<Individual> children = new ArrayList<>();
         population.deleteConstant();
-        for (Individual ind : pSelector.select(population, population.getSize()/10, typeSelectionParents)) {
+        for (Individual ind : pSelector.select(population, 1, typeSelectionParents)) {
             Individual i = new Individual(ind.getGenom(), ind.getChanged());
             int index = ThreadLocalRandom.current().nextInt(length);
             while (!i.inverseGene(index)) {
@@ -78,14 +93,7 @@ public class GeneticAlgoritm {
         List<Individual> children = new ArrayList<>();
         for (Individual ind : pSelector.select(population, population.getSize()/10, typeSelectionParents)) {
             Byte[] b = ind.getGenom();
-            Byte[] child = new Byte[b.length];
-            for (int i = 0; i < b.length; i++) {
-                if (Math.random() < standardProbability) {
-                    child[i] = (byte)(1 - b[i]);
-                } else {
-                    child[i] = b[i];
-                }
-            }
+            Byte[] child = SBM(b);
             Individual i = new Individual(child, ind.getChanged());
             if (i.calcFitness() > ind.calcFitness()) {
                 children.add(i);
@@ -95,6 +103,24 @@ public class GeneticAlgoritm {
         population.incrementAges();
         evalPopulation();
         updateMaximalFitness();
+    }
+
+    private Byte[] SBM(Byte[] b) {
+        Byte[] child = new Byte[b.length];
+        int l = 0;
+        for (int i = 0; i < b.length; i++) {
+            if (Math.random() < standardProbability) {
+                child[i] = (byte)(1 - b[i]);
+                l++;
+            } else {
+                child[i] = b[i];
+            }
+        }
+        if (l == 0) {
+            int index = ThreadLocalRandom.current().nextInt(b.length);
+            child[index] = (byte) (1 - b[index]);
+        }
+        return child;
     }
 
     public void mutation() throws GAException {
@@ -118,7 +144,7 @@ public class GeneticAlgoritm {
                     children.addAll(multiPointCrossover(parents.subList(i, i + 2).stream().map(ind -> ind.getGenom()).collect(Collectors.toList())).stream().map(b -> new Individual(b, changed)).collect(Collectors.toList()));
                     break;
                 case 1:
-                    children.addAll(uniformCrossover(parents.subList(i, i + 2).stream().map(ind -> ind.getGenom()).collect(Collectors.toList())).stream().map(b ->new Individual(b, changed)).collect(Collectors.toList()));
+                    children.add(new Individual(uniformCrossover(parents.subList(i, i + 2).stream().map(ind -> ind.getGenom()).collect(Collectors.toList())), changed));
                     break;
                 default:
                     throw new GAException("Sorry, " + type + " is incorrect type of crossoving");
@@ -140,7 +166,7 @@ public class GeneticAlgoritm {
                     children.addAll(multiPointCrossover(parents.subList(i, i + 2).stream().map(ind -> ind.getGenom()).collect(Collectors.toList())).stream().map(b ->new Individual(mutation(b), changed)).collect(Collectors.toList()));
                     break;
                 case 1:
-                    children.addAll(uniformCrossover(parents.subList(i, i + 2).stream().map(ind -> ind.getGenom()).collect(Collectors.toList())).stream().map(b ->new Individual(mutation(b), changed)).collect(Collectors.toList()));
+                    children.add(new Individual(mutation(uniformCrossover(parents.subList(i, i + 2).stream().map(ind -> ind.getGenom()).collect(Collectors.toList()))), changed));
                     break;
                 default:
                     throw new GAException("Sorry, " + type + " is incorrect type of crossoving");
@@ -196,24 +222,19 @@ public class GeneticAlgoritm {
         return children;
     }
 
-    public List<Byte[]> uniformCrossover(List<Byte[]> parents) throws GAException {
+    private Byte[] uniformCrossover(List<Byte[]> parents) throws GAException {
         if (parents.size() != 2) {
             throw new GAException("Sorry, expected two parents");
         }
         int length = parents.get(0).length;
-        Byte[] c0 = new Byte[length], c1 = new Byte[length];
+        Byte[] c0 = new Byte[length];
         for (int i = 0; i < length; i++) {
             if (probabilityCrossover < Math.random()) {
                 c0[i] = parents.get(1)[i];
-                c1[i] = parents.get(0)[i];
             } else {
                 c0[i] = parents.get(0)[i];
-                c1[i] = parents.get(1)[i];
             }
         }
-        List<Byte[]> children = new ArrayList<>();
-        children.add(c0);
-        children.add(c1);
-        return children;
+        return c0;
     }
 }

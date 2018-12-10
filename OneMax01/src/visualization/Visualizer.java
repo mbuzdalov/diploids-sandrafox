@@ -51,9 +51,9 @@ public class Visualizer extends ApplicationFrame {
     public static XYDataset createDataset( ) throws GAException {
         GeneticAlgoritm ga;
         int generations;
-        final XYSeries mutation = new XYSeries( "Mutation" );
+        final XYSeries mutation = new XYSeries( "RLS" );
         for (int i = 0; i < 5; i++) {
-            ga = new GeneticAlgoritm(100, 50, -1, 0, 2, 1);
+            ga = new GeneticAlgoritm(50, 50, -1, 0, 2, 1);
             ga.evalPopulation();
             generations = 1;
             while (!ga.isTerminated(50)) {
@@ -62,12 +62,28 @@ public class Visualizer extends ApplicationFrame {
                 ga.randomLocalSearch();
                 generations++;
             }
-            System.out.println(generations);
+            //System.out.println(generations);
             mutation.add(generations, 50);
+        }
+
+        final XYSeries mcrossover = new XYSeries( "greedy(m + 1)" );
+        for (int i = 0; i < 5; i++) {
+            ga = new GeneticAlgoritm(50, 50, -1, 0.5, 2, 1);
+            ga.evalPopulation();
+            generations = 1;
+            while (!ga.isTerminated(50)) {
+                //System.out.println(ga.getMaximalFitness());
+                mcrossover.add(generations, ga.getMaximalFitness());
+                ga.greedyMGA();
+                generations++;
+            }
+            System.out.println(generations);
+            mcrossover.add(generations, 50);
         }
 
         final XYSeriesCollection dataset = new XYSeriesCollection( );
         dataset.addSeries( mutation );
+        dataset.addSeries(mcrossover);
         return dataset;
     }
 
@@ -83,7 +99,7 @@ public class Visualizer extends ApplicationFrame {
 
             int width = 1000;   /* Width of the image */
             int height = 800;  /* Height of the image */
-            File XYChart = new File( "RLS1.jpeg" );
+            File XYChart = new File( "CrossoverVSRLS.jpeg" );
             ChartUtilities.saveChartAsJPEG( XYChart, xylineChart, width, height);
         } catch (GAException | IOException e) {
             System.out.println(e.getMessage());

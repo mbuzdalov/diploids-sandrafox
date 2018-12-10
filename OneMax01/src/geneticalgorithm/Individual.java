@@ -80,4 +80,12 @@ public class Individual {
     public boolean[] getChanged() {
         return changed;
     }
+
+    public boolean equals(Object o) {
+        if (o.getClass() == Individual.class) {
+            Individual i = (Individual) o;
+            return this.genom.equals(i.genom);
+        }
+        return false;
+    }
 }
