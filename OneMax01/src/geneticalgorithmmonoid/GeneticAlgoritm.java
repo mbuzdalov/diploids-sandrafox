@@ -1,9 +1,6 @@
-package geneticalgorithm;
-
-import org.ietf.jgss.GSSException;
+package geneticalgorithmmonoid;
 
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
@@ -123,7 +120,7 @@ public class GeneticAlgoritm {
         return child;
     }
 
-    public void mutation() throws GAException {
+    /*public void mutation() throws GAException {
         List<Individual> children = new ArrayList<>();
         for (Individual ind : pSelector.select(population, population.getSize()/10, typeSelectionParents)) {
             children.add(new Individual(mutation(ind.getGenom()), ind.getChanged()));
@@ -132,9 +129,9 @@ public class GeneticAlgoritm {
         population.incrementAges();
         evalPopulation();
         updateMaximalFitness();
-    }
+    }*/
 
-    public void crossover(int type) throws GAException {
+    /*public void crossover(int type) throws GAException {
         List<Individual> children = new ArrayList<>();
         List<Individual> parents = pSelector.select(population, population.getSize()/10, typeSelectionParents);
         boolean[] changed = parents.get(0).getChanged();
@@ -154,9 +151,9 @@ public class GeneticAlgoritm {
         population.incrementAges();
         evalPopulation();
         updateMaximalFitness();
-    }
+    }*/
 
-    public void crossoverAndMutation(int type) throws GAException {
+    /*public void crossoverAndMutation(int type) throws GAException {
         List<Individual> children = new ArrayList<>();
         List<Individual> parents = pSelector.select(population, population.getSize()/10, typeSelectionParents);
         boolean[] changed = parents.get(0).getChanged();
@@ -176,9 +173,9 @@ public class GeneticAlgoritm {
         population.incrementAges();
         evalPopulation();
         updateMaximalFitness();
-    }
+    }*/
 
-    private Byte[] mutation(Byte[] genom) {
+   /* private Byte[] mutation(Byte[] genom) {
         int length = genom.length;
         Byte[] newGenom = new Byte[length];
         System.arraycopy(genom, 0, newGenom, 0, length);
@@ -195,9 +192,9 @@ public class GeneticAlgoritm {
             positions.remove(index);
         }
         return newGenom;
-    }
+    }*/
 
-    public List<Byte[]> multiPointCrossover(List<Byte[]> parents) throws GAException {
+    /*public List<Byte[]> multiPointCrossover(List<Byte[]> parents) throws GAException {
         if (parents.size() != 2) {
             throw new GAException("Sorry, expected two parents");
         }
@@ -220,7 +217,7 @@ public class GeneticAlgoritm {
         children.add(c0);
         children.add(c1);
         return children;
-    }
+    }*/
 
     private Byte[] uniformCrossover(List<Byte[]> parents) throws GAException {
         if (parents.size() != 2) {

@@ -1,12 +1,12 @@
-package geneticalgorithm;
+package geneticalgorithmmonoid;
 
 public class Tester {
     public static void main(String[] args) {
-        try {
+        /*try {
             //only mutation
             /*for (int i = 1; i <= 5; i++) {
                 System.out.println("Trying: " + i);
-                geneticalgorithm.GeneticAlgoritm ga = new geneticalgorithm.GeneticAlgoritm(100, 50, -1, 0, 3, 1);
+                geneticalgorithmmonoid.GeneticAlgoritm ga = new geneticalgorithmmonoid.GeneticAlgoritm(100, 50, -1, 0, 3, 1);
                 ga.evalPopulation();
                 int generations = 1;
                 while (!ga.isTerminated(50)) {
@@ -19,7 +19,7 @@ public class Tester {
             //one point crossover
             /*for (int i = 1; i <= 5; i++) {
                 System.out.println("Trying: " + i);
-                geneticalgorithm.GeneticAlgoritm ga = new geneticalgorithm.GeneticAlgoritm(100, 50, 0, 0.9, 3, 1);
+                geneticalgorithmmonoid.GeneticAlgoritm ga = new geneticalgorithmmonoid.GeneticAlgoritm(100, 50, 0, 0.9, 3, 1);
                 ga.evalPopulation();
                 int generations = 1;
                 while (!ga.isTerminated(50)) {
@@ -31,7 +31,7 @@ public class Tester {
                 System.out.println("Generations: " + generations);
             }*/
             //mutation and crossover
-            for (int i = 1; i <= 5; i++) {
+            /*for (int i = 1; i <= 5; i++) {
                 System.out.println("Trying: " + i);
                 GeneticAlgoritm ga = new GeneticAlgoritm(100, 50, 24, 0.5, 3, 1);
                 ga.evalPopulation();
@@ -44,8 +44,8 @@ public class Tester {
                 }
                 System.out.println("Generations: " + generations);
             }
-        } catch (GAException e) {
-            System.out.println(e.getMessage());
-        }
+        } catch () {
+            System.out.println(0);
+        }*/
     }
 }

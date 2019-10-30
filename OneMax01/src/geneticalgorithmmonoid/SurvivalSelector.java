@@ -1,4 +1,4 @@
-package geneticalgorithm;
+package geneticalgorithmmonoid;
 
 import java.util.ArrayList;
 import java.util.List;

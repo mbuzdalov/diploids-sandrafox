@@ -1,4 +1,4 @@
-package geneticalgorithm;
+package geneticalgorithmmonoid;
 
 public class Individual {
     private Byte[] genom;

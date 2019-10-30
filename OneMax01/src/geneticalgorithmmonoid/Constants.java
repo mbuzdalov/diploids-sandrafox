@@ -1,4 +1,4 @@
-package geneticalgorithm;
+package geneticalgorithmmonoid;
 
 public class Constants {
     public static final String SBM = "standardBitMutation";

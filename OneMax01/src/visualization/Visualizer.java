@@ -1,23 +1,22 @@
 package visualization;
 
-import java.awt.Color;
-import java.awt.BasicStroke;
-import java.io.File;
-import java.io.IOException;
-
-import geneticalgorithm.GAException;
-import geneticalgorithm.GeneticAlgoritm;
+import geneticalgorithmdiploid.DominanceType;
+import geneticalgorithmmonoid.GAException;
+import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
-import org.jfree.ui.ApplicationFrame;
-import org.jfree.chart.plot.XYPlot;
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.xy.XYSeriesCollection;
-import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
+import org.jfree.ui.ApplicationFrame;
+
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
 
 public class Visualizer extends ApplicationFrame {
 
@@ -49,6 +48,7 @@ public class Visualizer extends ApplicationFrame {
     }
 
     public static XYDataset createDataset( ) throws GAException {
+        /* monoid
         GeneticAlgoritm ga;
         int generations;
         final XYSeries mutation = new XYSeries( "RLS" );
@@ -85,6 +85,74 @@ public class Visualizer extends ApplicationFrame {
         dataset.addSeries( mutation );
         dataset.addSeries(mcrossover);
         return dataset;
+
+         */
+        geneticalgorithmdiploid.GeneticAlgoritm ga;
+        int generations;
+        /*final XYSeries and = new XYSeries( "andSBM" );
+        for (int i = 0; i < 5; i++) {
+            ga = new geneticalgorithmdiploid.GeneticAlgoritm(50, 50, -1, 0, 2, 1, DominanceType.AND);
+            ga.evalPopulation();
+            generations = 1;
+            while (!ga.isTerminated(50)) {
+                //System.out.println(ga.getMaximalFitness());
+                and.add(generations, ga.getMaximalFitness());
+                ga.randomLocalSearch();
+                generations++;
+            }
+            //System.out.println(generations);
+            and.add(generations, 50);
+        }
+         */
+        final XYSeries or = new XYSeries( "orSBM");
+        for (int i = 0; i < 5; i++) {
+            ga = new geneticalgorithmdiploid.GeneticAlgoritm(1, 50, -1, 0, 1, 1, DominanceType.OR);
+            ga.evalPopulation();
+            generations = 1;
+            while (!ga.isTerminated(50)) {
+                //System.out.println(ga.getMaximalFitness());
+                or.add(generations, ga.getMaximalFitness());
+                ga.standardBitMutation();
+                generations++;
+            }
+            System.out.println(generations);
+            or.add(generations, 50);
+        }
+        final XYSeries mono = new XYSeries("monoSBM");
+        geneticalgorithmmonoid.GeneticAlgoritm ga1;
+        for (int i = 0; i < 5; i++) {
+            ga1 = new geneticalgorithmmonoid.GeneticAlgoritm(1, 50, -1, 0, 1, 1);
+            ga1.evalPopulation();
+            generations = 1;
+            while (!ga1.isTerminated(50)) {
+                //System.out.println(ga.getMaximalFitness());
+                mono.add(generations, ga1.getMaximalFitness());
+                ga1.standardBitMutation();
+                generations++;
+            }
+            System.out.println(generations);
+            mono.add(generations, 50);
+        }
+        final XYSeries delta = new XYSeries( "deltaSBM" );
+        for (int i = 0; i < 5; i++) {
+            ga = new geneticalgorithmdiploid.GeneticAlgoritm(1, 50, -1, 0, 1, 1, DominanceType.DELTA);
+            ga.evalPopulation();
+            generations = 1;
+            while (!ga.isTerminated(50)) {
+                //System.out.println(ga.getMaximalFitness());
+                delta.add(generations, ga.getMaximalFitness());
+                ga.standardBitMutation();
+                generations++;
+            }
+            //System.out.println(generations);
+            delta.add(generations, 50);
+        }
+        final XYSeriesCollection dataset = new XYSeriesCollection( );
+        dataset.addSeries(delta);
+        dataset.addSeries(or);
+        dataset.addSeries(mono);
+        //dataset.addSeries(and);
+        return dataset;
     }
 
     public static void main( String[ ] args ) {
@@ -99,7 +167,7 @@ public class Visualizer extends ApplicationFrame {
 
             int width = 1000;   /* Width of the image */
             int height = 800;  /* Height of the image */
-            File XYChart = new File( "CrossoverVSRLS.jpeg" );
+            File XYChart = new File( "SBMmono&diploid2.jpeg" );
             ChartUtilities.saveChartAsJPEG( XYChart, xylineChart, width, height);
         } catch (GAException | IOException e) {
             System.out.println(e.getMessage());

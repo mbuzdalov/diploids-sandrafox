@@ -1,4 +1,4 @@
-package geneticalgorithm;
+package geneticalgorithmmonoid;
 
 public class GAException extends Exception {
     public GAException(String message) {
