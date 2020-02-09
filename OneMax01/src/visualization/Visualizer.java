@@ -1,7 +1,6 @@
 package visualization;
 
-import geneticalgorithmdiploid.DominanceType;
-import geneticalgorithmmonoid.GAException;
+import geneticalgorithms.*;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.ChartUtilities;
@@ -13,6 +12,8 @@ import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.ApplicationFrame;
+import parentselectors.TypeSelectionParents;
+import survivalselectors.TypeSelectionSurvival;
 
 import java.awt.*;
 import java.io.File;
@@ -49,11 +50,11 @@ public class Visualizer extends ApplicationFrame {
 
     public static XYDataset createDataset( ) throws GAException {
         /* monoid
-        GeneticAlgoritm ga;
+        GAMonoid ga;
         int generations;
         final XYSeries mutation = new XYSeries( "RLS" );
         for (int i = 0; i < 5; i++) {
-            ga = new GeneticAlgoritm(50, 50, -1, 0, 2, 1);
+            ga = new GAMonoid(50, 50, -1, 0, 2, 1);
             ga.evalPopulation();
             generations = 1;
             while (!ga.isTerminated(50)) {
@@ -68,7 +69,7 @@ public class Visualizer extends ApplicationFrame {
 
         final XYSeries mcrossover = new XYSeries( "greedy(m + 1)" );
         for (int i = 0; i < 5; i++) {
-            ga = new GeneticAlgoritm(50, 50, -1, 0.5, 2, 1);
+            ga = new GAMonoid(50, 50, -1, 0.5, 2, 1);
             ga.evalPopulation();
             generations = 1;
             while (!ga.isTerminated(50)) {
@@ -87,11 +88,11 @@ public class Visualizer extends ApplicationFrame {
         return dataset;
 
          */
-        geneticalgorithmdiploid.GeneticAlgoritm ga;
+        GADiploidWithDominance ga;
         int generations;
         /*final XYSeries and = new XYSeries( "andSBM" );
         for (int i = 0; i < 5; i++) {
-            ga = new geneticalgorithmdiploid.GeneticAlgoritm(50, 50, -1, 0, 2, 1, DominanceType.AND);
+            ga = new geneticalgorithmdiploid.GAMonoid(50, 50, -1, 0, 2, 1, geneticalgorithms.DominanceType.AND);
             ga.evalPopulation();
             generations = 1;
             while (!ga.isTerminated(50)) {
@@ -106,46 +107,19 @@ public class Visualizer extends ApplicationFrame {
          */
         final XYSeries or = new XYSeries( "orSBM");
         for (int i = 0; i < 5; i++) {
-            ga = new geneticalgorithmdiploid.GeneticAlgoritm(1, 50, -1, 0, 1, 1, DominanceType.OR);
-            ga.evalPopulation();
-            generations = 1;
-            while (!ga.isTerminated(50)) {
-                //System.out.println(ga.getMaximalFitness());
-                or.add(generations, ga.getMaximalFitness());
-                ga.standardBitMutation();
-                generations++;
-            }
-            System.out.println(generations);
-            or.add(generations, 50);
+            ga = new GADiploidWithDominance(1, 50, -1, 0, TypeSelectionParents.SUS, TypeSelectionSurvival.FITNESS, DominanceType.OR, AlgorithmType.SBM);
+            addInfoToDataSet(ga, or);
         }
         final XYSeries mono = new XYSeries("monoSBM");
-        geneticalgorithmmonoid.GeneticAlgoritm ga1;
+        GAMonoid ga1;
         for (int i = 0; i < 5; i++) {
-            ga1 = new geneticalgorithmmonoid.GeneticAlgoritm(1, 50, -1, 0, 1, 1);
-            ga1.evalPopulation();
-            generations = 1;
-            while (!ga1.isTerminated(50)) {
-                //System.out.println(ga.getMaximalFitness());
-                mono.add(generations, ga1.getMaximalFitness());
-                ga1.standardBitMutation();
-                generations++;
-            }
-            System.out.println(generations);
-            mono.add(generations, 50);
+            ga1 = new GAMonoid(1, 50, -1, 0, TypeSelectionParents.SUS, TypeSelectionSurvival.FITNESS, AlgorithmType.SBM);
+            addInfoToDataSet(ga1, mono);
         }
         final XYSeries delta = new XYSeries( "deltaSBM" );
         for (int i = 0; i < 5; i++) {
-            ga = new geneticalgorithmdiploid.GeneticAlgoritm(1, 50, -1, 0, 1, 1, DominanceType.DELTA);
-            ga.evalPopulation();
-            generations = 1;
-            while (!ga.isTerminated(50)) {
-                //System.out.println(ga.getMaximalFitness());
-                delta.add(generations, ga.getMaximalFitness());
-                ga.standardBitMutation();
-                generations++;
-            }
-            //System.out.println(generations);
-            delta.add(generations, 50);
+            ga = new GADiploidWithDominance(1, 50, -1, 0, TypeSelectionParents.SUS, TypeSelectionSurvival.FITNESS, DominanceType.DELTA, AlgorithmType.SBM);
+            addInfoToDataSet(ga, delta);
         }
         final XYSeriesCollection dataset = new XYSeriesCollection( );
         dataset.addSeries(delta);
@@ -153,6 +127,19 @@ public class Visualizer extends ApplicationFrame {
         dataset.addSeries(mono);
         //dataset.addSeries(and);
         return dataset;
+    }
+
+    private static void addInfoToDataSet(GeneticAlgorithm ga, XYSeries s) throws GAException {
+        ga.evalPopulation();
+        int generations = 1;
+        while (!ga.isTerminated(50)) {
+            //System.out.println(ga.getMaximalFitness());
+            s.add(generations, ga.getMaximalFitness());
+            ga.newGeneration();
+            generations++;
+        }
+        //System.out.println(generations);
+        s.add(generations, 50);
     }
 
     public static void main( String[ ] args ) {
