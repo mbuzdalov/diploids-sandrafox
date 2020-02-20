@@ -38,9 +38,9 @@ public class GAMonoid extends GeneticAlgorithm {
         List<Individual> parents = population.getMaximal(2);
         Byte[] c = uniformCrossover(parents.stream().map(wrap(i -> i.getGenom(0))).collect(Collectors.toList()));
         Byte[] z = SBM(c);
-        List<Individual> p = new ArrayList(population.getPopulation());
+        List<Individual> p = population.getPopulation();
         Individual i = new IMonoid(z, parents.get(0).getChanged(0));
-        if (!p.contains(i) && i.calcFitness() > p.get(p.size() - 1).calcFitness()) {
+        if (!p.contains(i) && i.calcFitness() >= p.get(p.size() - 1).calcFitness()) {
             p.set(p.size() - 1, i);
         }
         population = new PMonoid(p);
@@ -71,7 +71,7 @@ public class GAMonoid extends GeneticAlgorithm {
     @Override
     protected void standardBitMutation() throws GAException {
         List<IMonoid> children = new ArrayList<>();
-        for (Individual ind : pSelector.select(population, population.getSize()/10, typeSelectionParents)) {
+        for (Individual ind : pSelector.select(population, 1, typeSelectionParents)) {
             Byte[] b = ind.getGenom(0);
             Byte[] child = SBM(b);
             IMonoid i = new IMonoid(child, ind.getChanged(0));

@@ -19,13 +19,13 @@ public abstract class SurvivalSelector {
         }
     }
 
-    private Population ageBased(Population old, List<? extends Individual> children, int size) {
+    private Population ageBased(Population old, List<? extends Individual> children, int size) throws GAException {
         List<Individual> newPopulation = new ArrayList<>(children);
         newPopulation.addAll(old.getNewest(size - children.size()));
         return returnNewPopulation(newPopulation);
     }
 
-    private Population fitnessBased(Population old, List<? extends Individual> children, int size) {
+    private Population fitnessBased(Population old, List<? extends Individual> children, int size) throws GAException {
         List<Individual> newPopulation = new ArrayList<>(children);
         newPopulation.addAll(old.getMaximal(size - children.size()));
         return returnNewPopulation(newPopulation);

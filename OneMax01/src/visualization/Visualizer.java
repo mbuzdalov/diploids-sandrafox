@@ -88,7 +88,7 @@ public class Visualizer extends ApplicationFrame {
         return dataset;
 
          */
-        GADiploidWithDominance ga;
+        GeneticAlgorithm ga;
         int generations;
         /*final XYSeries and = new XYSeries( "andSBM" );
         for (int i = 0; i < 5; i++) {
@@ -105,22 +105,29 @@ public class Visualizer extends ApplicationFrame {
             and.add(generations, 50);
         }
          */
-        final XYSeries or = new XYSeries( "orSBM");
-        for (int i = 0; i < 5; i++) {
-            ga = new GADiploidWithDominance(1, 50, -1, 0, TypeSelectionParents.SUS, TypeSelectionSurvival.FITNESS, DominanceType.OR, AlgorithmType.SBM);
-            addInfoToDataSet(ga, or);
+        final XYSeries or = new XYSeries( "GreedyMono");
+        final XYSeries delta = new XYSeries( "MutationDiploid" );
+        final XYSeries mono = new XYSeries("SBMMono");
+        for (int m = 50; m <= 1000; m += 50) {
+            for (int i = 0; i < 5; i++) {
+                ga = new GAMonoid(2, m, -1, 0.5, TypeSelectionParents.SUS, TypeSelectionSurvival.FITNESS, AlgorithmType.GREEDY);
+                addGenerationsToDataSet(ga, or, m);
+                ga = new GADiploidCycleWithAverage(2, m, -1, 0.5, TypeSelectionParents.SUS, TypeSelectionSurvival.FITNESS, AlgorithmType.SBM);
+                addGenerationsToDataSet(ga, delta, m);
+                ga = new GAMonoid(1, m, -1, 0.5, TypeSelectionParents.SUS, TypeSelectionSurvival.FITNESS, AlgorithmType.SBM);
+                addGenerationsToDataSet(ga, mono, m);
+            }
         }
-        final XYSeries mono = new XYSeries("monoSBM");
-        GAMonoid ga1;
+        /*final XYSeries mono = new XYSeries("RLS");
         for (int i = 0; i < 5; i++) {
-            ga1 = new GAMonoid(1, 50, -1, 0, TypeSelectionParents.SUS, TypeSelectionSurvival.FITNESS, AlgorithmType.SBM);
-            addInfoToDataSet(ga1, mono);
-        }
-        final XYSeries delta = new XYSeries( "deltaSBM" );
-        for (int i = 0; i < 5; i++) {
-            ga = new GADiploidWithDominance(1, 50, -1, 0, TypeSelectionParents.SUS, TypeSelectionSurvival.FITNESS, DominanceType.DELTA, AlgorithmType.SBM);
+            ga = new GADiploidCycleWithAverage(2, 50, -1, 0, TypeSelectionParents.SUS, TypeSelectionSurvival.FITNESS, AlgorithmType.RLS);
+            addInfoToDataSet(ga, mono);
+        }*/
+
+        /*for (int i = 0; i < 5; i++) {
+            ga = new GADiploidCycleWithAverage(2, 50, -1, 0.5, TypeSelectionParents.SUS, TypeSelectionSurvival.FITNESS, AlgorithmType.GREEDY);
             addInfoToDataSet(ga, delta);
-        }
+        }*/
         final XYSeriesCollection dataset = new XYSeriesCollection( );
         dataset.addSeries(delta);
         dataset.addSeries(or);
@@ -132,14 +139,26 @@ public class Visualizer extends ApplicationFrame {
     private static void addInfoToDataSet(GeneticAlgorithm ga, XYSeries s) throws GAException {
         ga.evalPopulation();
         int generations = 1;
-        while (!ga.isTerminated(50)) {
+        while (!ga.isTerminated(50) && generations <= 1000000) {
             //System.out.println(ga.getMaximalFitness());
             s.add(generations, ga.getMaximalFitness());
             ga.newGeneration();
             generations++;
         }
-        //System.out.println(generations);
-        s.add(generations, 50);
+        System.out.println(generations);
+        s.add(generations, ga.getMaximalFitness());
+    }
+
+    private static void addGenerationsToDataSet(GeneticAlgorithm ga, XYSeries s, int maxValue) throws GAException {
+        ga.evalPopulation();
+        int generations = 1;
+        while ((!ga.isTerminated(maxValue))) {
+            //System.out.println(ga.getMaximalFitness());
+            ga.newGeneration();
+            generations++;
+        }
+        System.out.println(generations);
+        s.add(generations, ga.getMaximalFitness());
     }
 
     public static void main( String[ ] args ) {
@@ -154,7 +173,7 @@ public class Visualizer extends ApplicationFrame {
 
             int width = 1000;   /* Width of the image */
             int height = 800;  /* Height of the image */
-            File XYChart = new File( "SBMmono&diploid2.jpeg" );
+            File XYChart = new File( "CycleV2.jpeg" );
             ChartUtilities.saveChartAsJPEG( XYChart, xylineChart, width, height);
         } catch (GAException | IOException e) {
             System.out.println(e.getMessage());

@@ -49,7 +49,7 @@ public class GADiploidWithDominance extends GeneticAlgorithm {
         population.deleteConstant();
         for (Individual ind : pSelector.select(population, 1, typeSelectionParents)) {
             IDiploidWithDominance i = new IDiploidWithDominance(ind.getGenom(0),
-                    ind.getGenom(0),
+                    ind.getGenom(1),
                     ind.getChanged(0),
                     ind.getChanged(1),
                     dt);
