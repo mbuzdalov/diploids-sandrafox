@@ -1,5 +1,5 @@
 package geneticalgorithms;
 
 public enum AlgorithmType {
-    GREEDY, RLS, SBM
+    GREEDY, RLS, SBM, SPCD, GREEDYMOD
 }

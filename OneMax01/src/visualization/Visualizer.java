@@ -105,41 +105,71 @@ public class Visualizer extends ApplicationFrame {
             and.add(generations, 50);
         }
          */
-        final XYSeries or = new XYSeries( "GreedyMono");
-        final XYSeries delta = new XYSeries( "MutationDiploid" );
-        final XYSeries mono = new XYSeries("SBMMono");
-        for (int m = 50; m <= 1000; m += 50) {
+        final XYSeries ean = new XYSeries( "(1 + 1)1/N");
+        final XYSeries ea2n = new XYSeries( "(1 + 1)1/2N" );
+        final XYSeries gan = new XYSeries("(2 + 1)1/N");
+        final XYSeries ga2n = new XYSeries("(2 + 1)1/2N");
+
+        for (int N = 5; N <= 45; N += 5) {
             for (int i = 0; i < 5; i++) {
-                ga = new GAMonoid(2, m, -1, 0.5, TypeSelectionParents.SUS, TypeSelectionSurvival.FITNESS, AlgorithmType.GREEDY);
-                addGenerationsToDataSet(ga, or, m);
-                ga = new GADiploidCycleWithAverage(2, m, -1, 0.5, TypeSelectionParents.SUS, TypeSelectionSurvival.FITNESS, AlgorithmType.SBM);
-                addGenerationsToDataSet(ga, delta, m);
-                ga = new GAMonoid(1, m, -1, 0.5, TypeSelectionParents.SUS, TypeSelectionSurvival.FITNESS, AlgorithmType.SBM);
-                addGenerationsToDataSet(ga, mono, m);
+                ga = new GADiploidWithTable(1, N, -1, 0.5, TypeSelectionParents.SUS,
+                        TypeSelectionSurvival.FITNESS, AlgorithmType.SBM, generateVector(N, 0.1), 1 / (double)N);
+                addGenerationsToDataSet(ga, ean, 2 * N);
+                //addInfoToDataSet(ga, ean, 2 * N);
+                ga = new GADiploidWithTable(1, N, -1, 0.5, TypeSelectionParents.SUS,
+                        TypeSelectionSurvival.FITNESS, AlgorithmType.SBM, generateVector(N, 0.1), 1 / (double)(2 * N));
+                //addGenerationsToDataSet(ga, ea2n, 2 * N);
+                //addInfoToDataSet(ga, ea2n, 2 * N);
+                ga = new GADiploidWithTable(2, N, -1, 0.5, TypeSelectionParents.SUS,
+                        TypeSelectionSurvival.FITNESS, AlgorithmType.GREEDY, generateVector(N, 0.1),
+                        1 / (double)N);
+                addGenerationsToDataSet(ga, gan, 2 * N);
+                ga = new GADiploidWithTable(2, N, -1, 0.5, TypeSelectionParents.SUS,
+                        TypeSelectionSurvival.FITNESS, AlgorithmType.GREEDY, generateVector(N, 0.1),
+                        1 / (double) (2 * N));
+                //addGenerationsToDataSet(ga, ga2n, 2 * N);
+                //addInfoToDataSet(ga, gan, 2 * N);
+                ga = new GADiploidWithTable(2, N, -1, 0.5, TypeSelectionParents.SUS,
+                        TypeSelectionSurvival.FITNESS, AlgorithmType.GREEDYMOD, generateVector(N, 0.1),
+                        1 / (double)(N));
+                //addGenerationsToDataSet(ga, ean, 2 * N);
+                ga = new GADiploidWithTable(2, N, -1, 0.5, TypeSelectionParents.SUS,
+                        TypeSelectionSurvival.FITNESS, AlgorithmType.GREEDYMOD, generateVector(N, 0.1),
+                        1 / (double)(2 * N));
+                //addGenerationsToDataSet(ga, ea2n, 2 * N);
+
             }
         }
-        /*final XYSeries mono = new XYSeries("RLS");
-        for (int i = 0; i < 5; i++) {
-            ga = new GADiploidCycleWithAverage(2, 50, -1, 0, TypeSelectionParents.SUS, TypeSelectionSurvival.FITNESS, AlgorithmType.RLS);
-            addInfoToDataSet(ga, mono);
-        }*/
 
-        /*for (int i = 0; i < 5; i++) {
-            ga = new GADiploidCycleWithAverage(2, 50, -1, 0.5, TypeSelectionParents.SUS, TypeSelectionSurvival.FITNESS, AlgorithmType.GREEDY);
-            addInfoToDataSet(ga, delta);
-        }*/
         final XYSeriesCollection dataset = new XYSeriesCollection( );
-        dataset.addSeries(delta);
-        dataset.addSeries(or);
-        dataset.addSeries(mono);
+        dataset.addSeries(ean);
+        dataset.addSeries(ea2n);
+        dataset.addSeries(gan);
+        dataset.addSeries(ga2n);
         //dataset.addSeries(and);
         return dataset;
     }
 
-    private static void addInfoToDataSet(GeneticAlgorithm ga, XYSeries s) throws GAException {
+    private static int[] generateVector(int length, double probabilityHe) {
+        double probability0 = probabilityHe + (1 - probabilityHe) / 2;
+        int[] vector = new int[length];
+        for (int i = 0; i < length; ++i) {
+            double p = Math.random();
+            if (p <= probabilityHe) {
+                vector[i] = 1;
+            } else if (p <= probability0) {
+                vector[i] = 0;
+            } else {
+                vector[i] = 2;
+            }
+        }
+        return vector;
+    }
+
+    private static void addInfoToDataSet(GeneticAlgorithm ga, XYSeries s, int maxValue) throws GAException {
         ga.evalPopulation();
         int generations = 1;
-        while (!ga.isTerminated(50) && generations <= 1000000) {
+        while (!ga.isTerminated(maxValue)) {
             //System.out.println(ga.getMaximalFitness());
             s.add(generations, ga.getMaximalFitness());
             ga.newGeneration();
@@ -173,7 +203,7 @@ public class Visualizer extends ApplicationFrame {
 
             int width = 1000;   /* Width of the image */
             int height = 800;  /* Height of the image */
-            File XYChart = new File( "CycleV2.jpeg" );
+            File XYChart = new File( "VectorWith0.1He2.jpeg" );
             ChartUtilities.saveChartAsJPEG( XYChart, xylineChart, width, height);
         } catch (GAException | IOException e) {
             System.out.println(e.getMessage());

@@ -20,6 +20,46 @@ public class GADiploidCycleWithAverage extends GeneticAlgorithm {
         sSelector = new SSDiploidWithAverage();
     }
 
+    protected void SinglePointCrossover() throws GAException {
+        List<Individual> parents = population.getMaximal(2);
+        Byte[][] newGenoms0 = spCrossover(List.of(parents.get(0).getGenom(0), parents.get(0).getGenom(1)));
+        Byte[][] newGenoms1 = spCrossover(List.of(parents.get(1).getGenom(0), parents.get(1).getGenom(1)));
+        int firstGamete = ThreadLocalRandom.current().nextInt(4), secondGamete = ThreadLocalRandom.current().nextInt(4);
+        Byte[] gamete0, gamete1;
+        if (firstGamete < 2) {
+            gamete0 = parents.get(0).getGenom(firstGamete);
+        } else {
+            gamete0 = newGenoms0[firstGamete - 2];
+        }
+        if (secondGamete < 2) {
+            gamete1 = parents.get(1).getGenom(secondGamete);
+        } else {
+            gamete1 = newGenoms1[secondGamete - 2];
+        }
+        Individual i = new IDiploidWithAverage(SBM(gamete0), SBM(gamete1), parents.get(0).getChanged(firstGamete % 2),
+                parents.get(1).getChanged(secondGamete % 2));
+        List<Individual> p = new ArrayList(population.getPopulation());
+        if (!p.contains(i) && i.calcFitness() > p.get(p.size() - 1).calcFitness()) {
+            p.set(p.size() - 1, i);
+        }
+        population = new PDiploidWithAverage(p);
+        updateMaximalFitness();
+    }
+
+    private Byte[][] spCrossover(List<Byte[]> parents) {
+        int point = ThreadLocalRandom.current().nextInt(length);
+        Byte[][] c = new Byte[2][length];
+        for (int i = 0; i <= point; i++) {
+            c[0][i] = parents.get(0)[i];
+            c[1][i] = parents.get(1)[i];
+        }
+        for (int i = point + 1; i < length; i++) {
+            c[0][i] = parents.get(1)[i];
+            c[1][i] = parents.get(0)[i];
+        }
+        return c;
+    }
+
     @Override
     protected void greedyMGA() throws GAException {
         List<Individual> parents = population.getMaximal(2);
