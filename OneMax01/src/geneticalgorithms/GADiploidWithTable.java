@@ -3,9 +3,7 @@ package geneticalgorithms;
 import individuals.IDiploidWithTable;
 import individuals.Individual;
 import parentselectors.TypeSelectionParents;
-import populations.PDiploidWithAverage;
 import populations.PDiploidWithTable;
-import survivalselectors.SSDiploidWithAverage;
 import survivalselectors.SSDiploidWithTable;
 import survivalselectors.TypeSelectionSurvival;
 import util.Lists;
@@ -18,13 +16,13 @@ public class GADiploidWithTable extends GeneticAlgorithm {
 
     public GADiploidWithTable(int size, int length, int countOfPoint, double probabilityCrossover,
                               TypeSelectionParents typeSelectionParents, TypeSelectionSurvival typeSelectionSurvival,
-                              AlgorithmType type, int[] vector, double probabiltySBM) {
+                              AlgorithmType type, int[] vector, double probabilitySBM) {
         super(countOfPoint, probabilityCrossover, typeSelectionParents, typeSelectionSurvival, length, type);
         population = new PDiploidWithTable(size, length, vector);
         individualWithMaximalFitness = population.maximalFitness();
         maximalFitness = individualWithMaximalFitness.calcFitness();
         sSelector = new SSDiploidWithTable();
-        standardProbability = probabiltySBM;
+        standardProbability = probabilitySBM;
     }
 
     @Override
@@ -50,9 +48,9 @@ public class GADiploidWithTable extends GeneticAlgorithm {
         IDiploidWithTable p1 = (IDiploidWithTable) parents.get(0), p2 = (IDiploidWithTable) parents.get(1);
         Byte[][] newGenoms0 = uniformCrossoverTwo(Lists.of(p1.getGenom(0), p1.getGenom(1)));
         Byte[][] newGenoms1 = uniformCrossoverTwo(Lists.of(p2.getGenom(0), p2.getGenom(1)));
-        int firstGamete = ThreadLocalRandom.current().nextInt(4);
+        //int firstGamete = ThreadLocalRandom.current().nextInt(4);
         int secondGamete = ThreadLocalRandom.current().nextInt(4);
-        Byte[] gamete0, gamete1;
+        //Byte[] gamete0, gamete1;
         Individual i = new IDiploidWithTable(
                 SBM(p1.moreLikely(new Byte[][]{p1.getGenom1(), p1.getGenom2(), newGenoms0[0], newGenoms0[1]})),
                 SBM(p2.moreLikely(new Byte[][]{p2.getGenom1(), p2.getGenom2(), newGenoms1[0], newGenoms1[1]})),
