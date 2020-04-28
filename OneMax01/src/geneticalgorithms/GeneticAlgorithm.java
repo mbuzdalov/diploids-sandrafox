@@ -99,10 +99,10 @@ public abstract class GeneticAlgorithm {
                 child[i] = b[i];
             }
         }
-        if (l == 0) {
-            int index = ThreadLocalRandom.current().nextInt(b.length);
-            child[index] = (byte) (1 - b[index]);
-        }
+//        if (l == 0) {
+//            int index = ThreadLocalRandom.current().nextInt(b.length);
+//            child[index] = (byte) (1 - b[index]);
+//        }
         return child;
     }
 
