@@ -6,6 +6,7 @@ import parentselectors.TypeSelectionParents;
 import populations.PDiploidWithAverage;
 import survivalselectors.SSDiploidWithAverage;
 import survivalselectors.TypeSelectionSurvival;
+import util.Lists;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,9 +23,10 @@ public class GADiploidCycleWithAverage extends GeneticAlgorithm {
 
     protected void SinglePointCrossover() throws GAException {
         List<Individual> parents = population.getMaximal(2);
-        Byte[][] newGenoms0 = spCrossover(List.of(parents.get(0).getGenom(0), parents.get(0).getGenom(1)));
-        Byte[][] newGenoms1 = spCrossover(List.of(parents.get(1).getGenom(0), parents.get(1).getGenom(1)));
-        int firstGamete = ThreadLocalRandom.current().nextInt(4), secondGamete = ThreadLocalRandom.current().nextInt(4);
+        Byte[][] newGenoms0 = spCrossover(Lists.of(parents.get(0).getGenom(0), parents.get(0).getGenom(1)));
+        Byte[][] newGenoms1 = spCrossover(Lists.of(parents.get(1).getGenom(0), parents.get(1).getGenom(1)));
+        int firstGamete = ThreadLocalRandom.current().nextInt(4);
+        int secondGamete = ThreadLocalRandom.current().nextInt(4);
         Byte[] gamete0, gamete1;
         if (firstGamete < 2) {
             gamete0 = parents.get(0).getGenom(firstGamete);
@@ -38,7 +40,7 @@ public class GADiploidCycleWithAverage extends GeneticAlgorithm {
         }
         Individual i = new IDiploidWithAverage(SBM(gamete0), SBM(gamete1), parents.get(0).getChanged(firstGamete % 2),
                 parents.get(1).getChanged(secondGamete % 2));
-        List<Individual> p = new ArrayList(population.getPopulation());
+        List<Individual> p = new ArrayList<>(population.getPopulation());
         if (!p.contains(i) && i.calcFitness() > p.get(p.size() - 1).calcFitness()) {
             p.set(p.size() - 1, i);
         }
@@ -63,9 +65,10 @@ public class GADiploidCycleWithAverage extends GeneticAlgorithm {
     @Override
     protected void greedyMGA() throws GAException {
         List<Individual> parents = population.getMaximal(2);
-        Byte[][] newGenoms0 = uniformCrossoverTwo(List.of(parents.get(0).getGenom(0), parents.get(0).getGenom(1)));
-        Byte[][] newGenoms1 = uniformCrossoverTwo(List.of(parents.get(1).getGenom(0), parents.get(1).getGenom(1)));
-        int firstGamete = ThreadLocalRandom.current().nextInt(4), secondGamete = ThreadLocalRandom.current().nextInt(4);
+        Byte[][] newGenoms0 = uniformCrossoverTwo(Lists.of(parents.get(0).getGenom(0), parents.get(0).getGenom(1)));
+        Byte[][] newGenoms1 = uniformCrossoverTwo(Lists.of(parents.get(1).getGenom(0), parents.get(1).getGenom(1)));
+        int firstGamete = ThreadLocalRandom.current().nextInt(4);
+        int secondGamete = ThreadLocalRandom.current().nextInt(4);
         Byte[] gamete0, gamete1;
         if (firstGamete < 2) {
             gamete0 = parents.get(0).getGenom(firstGamete);
@@ -79,7 +82,7 @@ public class GADiploidCycleWithAverage extends GeneticAlgorithm {
         }
         Individual i = new IDiploidWithAverage(SBM(gamete0), SBM(gamete1), parents.get(0).getChanged(firstGamete % 2),
                 parents.get(1).getChanged(secondGamete % 2));
-        List<Individual> p = new ArrayList(population.getPopulation());
+        List<Individual> p = new ArrayList<>(population.getPopulation());
         if (!p.contains(i) && i.calcFitness() > p.get(p.size() - 1).calcFitness()) {
             p.set(p.size() - 1, i);
         }
@@ -112,7 +115,8 @@ public class GADiploidCycleWithAverage extends GeneticAlgorithm {
         List<IDiploidWithAverage> children = new ArrayList<>();
         population.deleteConstant();
         List<Individual> inds = pSelector.select(population, 2, typeSelectionParents);
-        int first = ThreadLocalRandom.current().nextInt(2), second = ThreadLocalRandom.current().nextInt(2);
+        int first = ThreadLocalRandom.current().nextInt(2);
+        int second = ThreadLocalRandom.current().nextInt(2);
         IDiploidWithAverage i = new IDiploidWithAverage(inds.get(0).getGenom(first), inds.get(1).getGenom(second),
                 inds.get(0).getChanged(first), inds.get(1).getChanged(second));
         int index = ThreadLocalRandom.current().nextInt(length);
