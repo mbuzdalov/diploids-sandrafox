@@ -18,6 +18,7 @@ import survivalselectors.TypeSelectionSurvival;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.util.function.Supplier;
 
 public class Visualizer extends ApplicationFrame {
 
@@ -88,8 +89,6 @@ public class Visualizer extends ApplicationFrame {
         return dataset;
 
          */
-        GeneticAlgorithm ga;
-        int generations;
         /*final XYSeries and = new XYSeries( "andSBM" );
         for (int i = 0; i < 5; i++) {
             ga = new geneticalgorithmdiploid.GAMonoid(50, 50, -1, 0, 2, 1, geneticalgorithms.DominanceType.AND);
@@ -110,35 +109,32 @@ public class Visualizer extends ApplicationFrame {
         final XYSeries gan = new XYSeries("(2 + 1)1/N");
         final XYSeries ga2n = new XYSeries("(2 + 1)1/2N");
 
-        for (int N = 5; N <= 45; N += 5) {
-            for (int i = 0; i < 5; i++) {
-                ga = new GADiploidWithTable(1, N, -1, 0.5, TypeSelectionParents.SUS,
-                        TypeSelectionSurvival.FITNESS, AlgorithmType.SBM, generateVector(N, 0.1), 1 / (double)N);
-                addGenerationsToDataSet(ga, ean, 2 * N);
-                //addInfoToDataSet(ga, ean, 2 * N);
-                ga = new GADiploidWithTable(1, N, -1, 0.5, TypeSelectionParents.SUS,
-                        TypeSelectionSurvival.FITNESS, AlgorithmType.SBM, generateVector(N, 0.1), 1 / (double)(2 * N));
-                //addGenerationsToDataSet(ga, ea2n, 2 * N);
-                //addInfoToDataSet(ga, ea2n, 2 * N);
-                ga = new GADiploidWithTable(2, N, -1, 0.5, TypeSelectionParents.SUS,
-                        TypeSelectionSurvival.FITNESS, AlgorithmType.GREEDY, generateVector(N, 0.1),
-                        1 / (double)N);
-                addGenerationsToDataSet(ga, gan, 2 * N);
-                ga = new GADiploidWithTable(2, N, -1, 0.5, TypeSelectionParents.SUS,
-                        TypeSelectionSurvival.FITNESS, AlgorithmType.GREEDY, generateVector(N, 0.1),
-                        1 / (double) (2 * N));
-                //addGenerationsToDataSet(ga, ga2n, 2 * N);
-                //addInfoToDataSet(ga, gan, 2 * N);
-                ga = new GADiploidWithTable(2, N, -1, 0.5, TypeSelectionParents.SUS,
-                        TypeSelectionSurvival.FITNESS, AlgorithmType.GREEDYMOD, generateVector(N, 0.1),
-                        1 / (double)(N));
-                //addGenerationsToDataSet(ga, ean, 2 * N);
-                ga = new GADiploidWithTable(2, N, -1, 0.5, TypeSelectionParents.SUS,
-                        TypeSelectionSurvival.FITNESS, AlgorithmType.GREEDYMOD, generateVector(N, 0.1),
-                        1 / (double)(2 * N));
-                //addGenerationsToDataSet(ga, ea2n, 2 * N);
-
-            }
+        final int nRuns = 10;
+        for (int N = 100; N <= 1000; N += 100) {
+            final int n = N;
+            addGenerationsToDataSet(() -> new GADiploidWithTable(1, n, -1, 0.5, TypeSelectionParents.SUS,
+                    TypeSelectionSurvival.FITNESS, AlgorithmType.SBM, generateVector(n, 0.1), 1.0 / n),
+                    ean, nRuns, 2 * n);
+            //addInfoToDataSet(ga, ean, 2 * N);
+            addGenerationsToDataSet(() -> new GADiploidWithTable(1, n, -1, 0.5, TypeSelectionParents.SUS,
+                    TypeSelectionSurvival.FITNESS, AlgorithmType.SBM, generateVector(n, 0.1), 0.5 / n),
+                    ea2n, nRuns, 2 * n);
+            //addInfoToDataSet(ga, ea2n, 2 * N);
+            addGenerationsToDataSet(() -> new GADiploidWithTable(2, n, -1, 0.5, TypeSelectionParents.SUS,
+                    TypeSelectionSurvival.FITNESS, AlgorithmType.GREEDY, generateVector(n, 0.1), 1.0 / n),
+                    gan, nRuns, 2 * n);
+            addGenerationsToDataSet(() -> new GADiploidWithTable(2, n, -1, 0.5, TypeSelectionParents.SUS,
+                    TypeSelectionSurvival.FITNESS, AlgorithmType.GREEDY, generateVector(n, 0.1), 0.5 / n),
+                    ga2n, nRuns, 2 * n);
+            //addInfoToDataSet(ga, gan, 2 * N);
+//            ga = new GADiploidWithTable(2, N, -1, 0.5, TypeSelectionParents.SUS,
+//                    TypeSelectionSurvival.FITNESS, AlgorithmType.GREEDYMOD, generateVector(N, 0.1),
+//                    1 / (double)(N));
+            //addGenerationsToDataSet(ga, ean, 2 * N);
+//            ga = new GADiploidWithTable(2, N, -1, 0.5, TypeSelectionParents.SUS,
+//                    TypeSelectionSurvival.FITNESS, AlgorithmType.GREEDYMOD, generateVector(N, 0.1),
+//                    1 / (double)(2 * N));
+            //addGenerationsToDataSet(ga, ea2n, 2 * N);
         }
 
         final XYSeriesCollection dataset = new XYSeriesCollection( );
@@ -179,24 +175,28 @@ public class Visualizer extends ApplicationFrame {
         s.add(generations, ga.getMaximalFitness());
     }
 
-    private static void addGenerationsToDataSet(GeneticAlgorithm ga, XYSeries s, int maxValue) throws GAException {
-        ga.evalPopulation();
-        int generations = 1;
-        while ((!ga.isTerminated(maxValue))) {
-            //System.out.println(ga.getMaximalFitness());
-            ga.newGeneration();
-            generations++;
+    private static void addGenerationsToDataSet(Supplier<GeneticAlgorithm> gaSup, XYSeries s, int nRuns, int maxValue) throws GAException {
+        double sumGenerations = 0;
+        for (int i = 0; i < nRuns; ++i) {
+            GeneticAlgorithm ga = gaSup.get();
+            ga.evalPopulation();
+            int generations = 1;
+            while ((!ga.isTerminated(maxValue))) {
+                ga.newGeneration();
+                generations++;
+            }
+            System.out.println(generations);
+            sumGenerations += generations;
         }
-        System.out.println(generations);
-        s.add(generations, ga.getMaximalFitness());
+        s.add(maxValue, sumGenerations / nRuns);
     }
 
     public static void main( String[ ] args ) {
         try {
             JFreeChart xylineChart = ChartFactory.createXYLineChart(
                     "Genetic Algorithms progress",
-                    "Generations",
-                    "Score",
+                    "Problem size",
+                    "Average generations",
                     Visualizer.createDataset(),
                     PlotOrientation.VERTICAL,
                     true, true, false);
