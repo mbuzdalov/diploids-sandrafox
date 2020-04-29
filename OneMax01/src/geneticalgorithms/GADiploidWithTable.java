@@ -84,8 +84,10 @@ public class GADiploidWithTable extends GeneticAlgorithm {
             gamete1 = newGenoms1[secondGamete - 2];
         }
         Individual i = new IDiploidWithTable(SBM(gamete0), SBM(gamete1), ((IDiploidWithTable) parents.get(0)).getVector());
-        List<Individual> p = new ArrayList<>(population.getPopulation());
-        if (!p.contains(i) && i.calcFitness() > p.get(p.size() - 1).calcFitness()) {
+        // Change: was (population.getPopulation()), but it is unsorted. This seems to clash with the logic below
+        List<Individual> p = new ArrayList<>(parents);
+        // >= since we want to escape from plateaus
+        if (!p.contains(i) && i.calcFitness() >= p.get(p.size() - 1).calcFitness()) {
             p.set(p.size() - 1, i);
         }
         population = new PDiploidWithTable(p);
@@ -118,7 +120,7 @@ public class GADiploidWithTable extends GeneticAlgorithm {
         for (Individual ind : inds) {
             IDiploidWithTable i = new IDiploidWithTable(SBM(ind.getGenom(0)), SBM(ind.getGenom(1)),
                     ((IDiploidWithTable) ind).getVector());
-            if (i.calcFitness() > ind.calcFitness()) {
+            if (i.calcFitness() >= ind.calcFitness()) {
                 children.add(i);
             }
         }
