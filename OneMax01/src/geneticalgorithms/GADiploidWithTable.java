@@ -49,13 +49,12 @@ public class GADiploidWithTable extends GeneticAlgorithm {
         Byte[][] newGenoms0 = uniformCrossoverTwo(Lists.of(p1.getGenom(0), p1.getGenom(1)));
         Byte[][] newGenoms1 = uniformCrossoverTwo(Lists.of(p2.getGenom(0), p2.getGenom(1)));
         //int firstGamete = ThreadLocalRandom.current().nextInt(4);
-        int secondGamete = ThreadLocalRandom.current().nextInt(4);
+        //int secondGamete = ThreadLocalRandom.current().nextInt(4);
         //Byte[] gamete0, gamete1;
         Individual i = new IDiploidWithTable(
                 SBM(p1.moreLikely(new Byte[][]{p1.getGenom1(), p1.getGenom2(), newGenoms0[0], newGenoms0[1]})),
                 SBM(p2.moreLikely(new Byte[][]{p2.getGenom1(), p2.getGenom2(), newGenoms1[0], newGenoms1[1]})),
-                p1.getChanged(0),
-                p2.getChanged(secondGamete % 2), p1.getVector());
+                p1.getVector());
         List<Individual> p = new ArrayList<>(population.getPopulation());
         if (!p.contains(i) && i.calcFitness() > p.get(p.size() - 1).calcFitness()) {
             p.set(p.size() - 1, i);
@@ -84,8 +83,7 @@ public class GADiploidWithTable extends GeneticAlgorithm {
         } else {
             gamete1 = newGenoms1[secondGamete - 2];
         }
-        Individual i = new IDiploidWithTable(SBM(gamete0), SBM(gamete1), parents.get(0).getChanged(firstGamete % 2),
-                parents.get(1).getChanged(secondGamete % 2), ((IDiploidWithTable) parents.get(0)).getVector());
+        Individual i = new IDiploidWithTable(SBM(gamete0), SBM(gamete1), ((IDiploidWithTable) parents.get(0)).getVector());
         List<Individual> p = new ArrayList<>(population.getPopulation());
         if (!p.contains(i) && i.calcFitness() > p.get(p.size() - 1).calcFitness()) {
             p.set(p.size() - 1, i);
@@ -119,7 +117,7 @@ public class GADiploidWithTable extends GeneticAlgorithm {
         List<Individual> inds = pSelector.select(population, 1, typeSelectionParents);
         for (Individual ind : inds) {
             IDiploidWithTable i = new IDiploidWithTable(SBM(ind.getGenom(0)), SBM(ind.getGenom(1)),
-                    ind.getChanged(0), ind.getChanged(1), ((IDiploidWithTable) ind).getVector());
+                    ((IDiploidWithTable) ind).getVector());
             if (i.calcFitness() > ind.calcFitness()) {
                 children.add(i);
             }
