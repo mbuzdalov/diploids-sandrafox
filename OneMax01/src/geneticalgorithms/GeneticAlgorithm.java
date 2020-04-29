@@ -1,16 +1,13 @@
 package geneticalgorithms;
 
-import individuals.IDiploidWithDominance;
 import individuals.Individual;
 import parentselectors.ParentSelector;
 import parentselectors.TypeSelectionParents;
-import populations.PDiploidWithDominance;
 import populations.Population;
 import survivalselectors.SurvivalSelector;
 import survivalselectors.TypeSelectionSurvival;
 
 import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Function;
 
 public abstract class GeneticAlgorithm {
@@ -88,12 +85,12 @@ public abstract class GeneticAlgorithm {
         };
     }
 
-    protected Byte[] SBM(Byte[] b) {
-        Byte[] child = new Byte[b.length];
+    protected byte[] SBM(byte[] b) {
+        byte[] child = new byte[b.length];
         int l = 0;
         for (int i = 0; i < b.length; i++) {
             if (Math.random() < standardProbability) {
-                child[i] = (byte)(1 - b[i]);
+                child[i] = (byte) (1 - b[i]);
                 l++;
             } else {
                 child[i] = b[i];
@@ -106,12 +103,12 @@ public abstract class GeneticAlgorithm {
         return child;
     }
 
-    protected Byte[] uniformCrossover(List<Byte[]> parents) throws GAException {
+    protected byte[] uniformCrossover(List<byte[]> parents) throws GAException {
         if (parents.size() != 2) {
             throw new GAException("Sorry, expected two parents");
         }
         int length = parents.get(0).length;
-        Byte[] c0 = new Byte[length];
+        byte[] c0 = new byte[length];
         for (int i = 0; i < length; i++) {
             if (probabilityCrossover < Math.random()) {
                 c0[i] = parents.get(1)[i];

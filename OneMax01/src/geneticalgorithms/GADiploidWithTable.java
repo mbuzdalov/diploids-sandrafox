@@ -46,14 +46,14 @@ public class GADiploidWithTable extends GeneticAlgorithm {
     protected void greedyMGAMod() throws GAException {
         List<Individual> parents = population.getMaximal(2);
         IDiploidWithTable p1 = (IDiploidWithTable) parents.get(0), p2 = (IDiploidWithTable) parents.get(1);
-        Byte[][] newGenoms0 = uniformCrossoverTwo(Lists.of(p1.getGenom(0), p1.getGenom(1)));
-        Byte[][] newGenoms1 = uniformCrossoverTwo(Lists.of(p2.getGenom(0), p2.getGenom(1)));
+        byte[][] newGenoms0 = uniformCrossoverTwo(Lists.of(p1.getGenom(0), p1.getGenom(1)));
+        byte[][] newGenoms1 = uniformCrossoverTwo(Lists.of(p2.getGenom(0), p2.getGenom(1)));
         //int firstGamete = ThreadLocalRandom.current().nextInt(4);
         //int secondGamete = ThreadLocalRandom.current().nextInt(4);
         //Byte[] gamete0, gamete1;
         Individual i = new IDiploidWithTable(
-                SBM(p1.moreLikely(new Byte[][]{p1.getGenom1(), p1.getGenom2(), newGenoms0[0], newGenoms0[1]})),
-                SBM(p2.moreLikely(new Byte[][]{p2.getGenom1(), p2.getGenom2(), newGenoms1[0], newGenoms1[1]})),
+                SBM(p1.moreLikely(new byte[][]{p1.getGenom1(), p1.getGenom2(), newGenoms0[0], newGenoms0[1]})),
+                SBM(p2.moreLikely(new byte[][]{p2.getGenom1(), p2.getGenom2(), newGenoms1[0], newGenoms1[1]})),
                 p1.getVector());
         List<Individual> p = new ArrayList<>(population.getPopulation());
         if (!p.contains(i) && i.calcFitness() > p.get(p.size() - 1).calcFitness()) {
@@ -68,11 +68,11 @@ public class GADiploidWithTable extends GeneticAlgorithm {
     @Override
     protected void greedyMGA() throws GAException {
         List<Individual> parents = population.getMaximal(2);
-        Byte[][] newGenoms0 = uniformCrossoverTwo(Lists.of(parents.get(0).getGenom(0), parents.get(0).getGenom(1)));
-        Byte[][] newGenoms1 = uniformCrossoverTwo(Lists.of(parents.get(1).getGenom(0), parents.get(1).getGenom(1)));
+        byte[][] newGenoms0 = uniformCrossoverTwo(Lists.of(parents.get(0).getGenom(0), parents.get(0).getGenom(1)));
+        byte[][] newGenoms1 = uniformCrossoverTwo(Lists.of(parents.get(1).getGenom(0), parents.get(1).getGenom(1)));
         int firstGamete = ThreadLocalRandom.current().nextInt(4);
         int secondGamete = ThreadLocalRandom.current().nextInt(4);
-        Byte[] gamete0, gamete1;
+        byte[] gamete0, gamete1;
         if (firstGamete < 2) {
             gamete0 = parents.get(0).getGenom(firstGamete);
         } else {
@@ -93,12 +93,12 @@ public class GADiploidWithTable extends GeneticAlgorithm {
         updateMaximalFitness();
     }
 
-    private Byte[][] uniformCrossoverTwo(List<Byte[]> parents) throws GAException {
+    private byte[][] uniformCrossoverTwo(List<byte[]> parents) throws GAException {
         if (parents.size() != 2) {
             throw new GAException("Sorry, expected two parents");
         }
         int length = parents.get(0).length;
-        Byte[][] c = new Byte[2][length];
+        byte[][] c = new byte[2][length];
         for (int i = 0; i < length; i++) {
             if (probabilityCrossover < Math.random()) {
                 c[0][i] = parents.get(1)[i];

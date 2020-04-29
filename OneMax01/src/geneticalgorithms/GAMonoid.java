@@ -1,11 +1,9 @@
 package geneticalgorithms;
 
-
 import individuals.IMonoid;
 import individuals.Individual;
 import parentselectors.TypeSelectionParents;
 import populations.PMonoid;
-import populations.Population;
 import survivalselectors.SSMonoid;
 import survivalselectors.TypeSelectionSurvival;
 
@@ -36,8 +34,8 @@ public class GAMonoid extends GeneticAlgorithm {
     @Override
     protected void greedyMGA() throws GAException {
         List<Individual> parents = population.getMaximal(2);
-        Byte[] c = uniformCrossover(parents.stream().map(wrap(i -> i.getGenom(0))).collect(Collectors.toList()));
-        Byte[] z = SBM(c);
+        byte[] c = uniformCrossover(parents.stream().map(wrap(i -> i.getGenom(0))).collect(Collectors.toList()));
+        byte[] z = SBM(c);
         List<Individual> p = population.getPopulation();
         Individual i = new IMonoid(z, parents.get(0).getChanged(0));
         if (!p.contains(i) && i.calcFitness() >= p.get(p.size() - 1).calcFitness()) {
@@ -72,8 +70,8 @@ public class GAMonoid extends GeneticAlgorithm {
     protected void standardBitMutation() throws GAException {
         List<IMonoid> children = new ArrayList<>();
         for (Individual ind : pSelector.select(population, 1, typeSelectionParents)) {
-            Byte[] b = ind.getGenom(0);
-            Byte[] child = SBM(b);
+            byte[] b = ind.getGenom(0);
+            byte[] child = SBM(b);
             IMonoid i = new IMonoid(child, ind.getChanged(0));
             if (i.calcFitness() > ind.calcFitness()) {
                 children.add(i);

@@ -5,13 +5,13 @@ import geneticalgorithms.GAException;
 import java.util.Arrays;
 
 public class IMonoid implements Individual {
-    private Byte[] genom;
+    private final byte[] genom;
     private int fitness = -1;
-    private boolean[] changed;
+    private final boolean[] changed;
     private int countNotChanged;
 
     public IMonoid(int size) {
-        genom = new Byte[size];
+        genom = new byte[size];
         changed = new boolean[size];
         for (int i = 0; i < size; i++) {
             if (Math.random() > 0.5) {
@@ -21,13 +21,11 @@ public class IMonoid implements Individual {
             }
             changed[i] = false;
         }
-        fitness = -1;
         countNotChanged = size;
     }
 
-    public IMonoid(Byte[] value, boolean[] changed) {
-        genom = new Byte[value.length];
-        System.arraycopy(value, 0, genom, 0, value.length);
+    public IMonoid(byte[] value, boolean[] changed) {
+        genom = value.clone();
         this.changed = new boolean[changed.length];
         countNotChanged = changed.length;
         for (int i = 0; i < changed.length; i++) {
@@ -52,15 +50,11 @@ public class IMonoid implements Individual {
     public int calcFitness() {
         if (fitness == -1) {
             fitness = 0;
-            for (int i = 0; i < genom.length; i++) {
-                fitness += genom[i];
+            for (byte b : genom) {
+                fitness += b;
             }
         }
         return fitness;
-    }
-
-    public Byte[] getGenom() {
-        return genom;
     }
 
     public boolean inverseGene(int position) {
@@ -83,7 +77,7 @@ public class IMonoid implements Individual {
     }
 
     @Override
-    public Byte[] getGenom(int number) throws GAException {
+    public byte[] getGenom(int number) throws GAException {
         if (number != 0) throw new GAException("Monoid individual has only one genom");
         return genom;
     }

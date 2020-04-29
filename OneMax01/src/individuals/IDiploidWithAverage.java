@@ -2,18 +2,18 @@ package individuals;
 
 import geneticalgorithms.GAException;
 
+import java.util.Arrays;
+
 public class IDiploidWithAverage implements Individual {
-    private Byte[][] genoms;
+    private final byte[][] genoms;
     private int fitness = -1;
     private int age;
-    private boolean[][] changeds;
-    private int[] countNotChangeds;
-    private int size;
+    private final boolean[][] changeds;
+    private final int[] countNotChangeds;
+    private final int size;
 
     public IDiploidWithAverage(int size) {
-        genoms = new Byte[2][];
-        genoms[0] = new Byte[size];
-        genoms[1] = new Byte[size];
+        genoms = new byte[2][size];
         changeds = new boolean[2][];
         changeds[0] = new boolean[size];
         changeds[1] = new boolean[size];
@@ -31,7 +31,6 @@ public class IDiploidWithAverage implements Individual {
             changeds[0][i] = false;
             changeds[1][i] = false;
         }
-        fitness = -1;
         countNotChangeds = new int[2];
         countNotChangeds[0] = size;
         countNotChangeds[1] = size;
@@ -46,13 +45,9 @@ public class IDiploidWithAverage implements Individual {
         return age;
     }
 
-    public IDiploidWithAverage(Byte[] value1, Byte[] value2, boolean[] changed1, boolean[] changed2) {
-        genoms = new Byte[2][];
+    public IDiploidWithAverage(byte[] value1, byte[] value2, boolean[] changed1, boolean[] changed2) {
+        genoms = new byte[][] { value1.clone(), value2.clone() };
         size = value1.length;
-        genoms[0] = new Byte[value1.length];
-        genoms[1] = new Byte[value2.length];
-        System.arraycopy(value1, 0, genoms[0], 0, value1.length);
-        System.arraycopy(value2, 0, genoms[1], 0, value2.length);
         changeds = new boolean[2][];
         this.changeds[0] = new boolean[changed1.length];
         this.changeds[1] = new boolean[changed2.length];
@@ -99,17 +94,9 @@ public class IDiploidWithAverage implements Individual {
     }
 
     @Override
-    public Byte[] getGenom(int number) throws GAException {
+    public byte[] getGenom(int number) throws GAException {
         if (!(number == 0 || number == 1)) throw new GAException("Diploid individual has only two genoms");
         return genoms[number];
-    }
-
-    public Byte[] getGenom1() {
-        return genoms[0];
-    }
-
-    public Byte[] getGenom2() {
-        return genoms[1];
     }
 
     public boolean inverseGene(int position, int genom) {
@@ -139,7 +126,7 @@ public class IDiploidWithAverage implements Individual {
     public boolean equals(Object o) {
         if (o.getClass() == IDiploidWithAverage.class) {
             IDiploidWithAverage i = (IDiploidWithAverage) o;
-            return this.genoms.equals(i.genoms);
+            return Arrays.deepEquals(this.genoms, i.genoms);
         }
         return false;
     }

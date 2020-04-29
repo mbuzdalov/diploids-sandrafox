@@ -8,16 +8,14 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class IDiploidWithTable implements Individual {
-    private Byte[][] genoms;
+    private final byte[][] genoms;
     private int fitness = -1;
     private int age;
-    private int size;
-    private int[] vector;
+    private final int size;
+    private final int[] vector;
 
     public IDiploidWithTable(int size, int[] vector) {
-        genoms = new Byte[2][];
-        genoms[0] = new Byte[size];
-        genoms[1] = new Byte[size];
+        genoms = new byte[2][size];
         for (int i = 0; i < size; i++) {
             if (Math.random() > 0.5) {
                 genoms[0][i] = 1;
@@ -30,7 +28,6 @@ public class IDiploidWithTable implements Individual {
                 genoms[1][i] = 0;
             }
         }
-        fitness = -1;
         this.size = size;
         this.vector = vector;
     }
@@ -43,13 +40,9 @@ public class IDiploidWithTable implements Individual {
         return age;
     }
 
-    public IDiploidWithTable(Byte[] value1, Byte[] value2, int[] vector) {
-        genoms = new Byte[2][];
+    public IDiploidWithTable(byte[] value1, byte[] value2, int[] vector) {
+        genoms = new byte[][] { value1.clone(), value2.clone() };
         size = value1.length;
-        genoms[0] = new Byte[value1.length];
-        genoms[1] = new Byte[value2.length];
-        System.arraycopy(value1, 0, genoms[0], 0, value1.length);
-        System.arraycopy(value2, 0, genoms[1], 0, value2.length);
         this.vector = vector;
         calcFitness();
     }
@@ -75,16 +68,16 @@ public class IDiploidWithTable implements Individual {
     }
 
     @Override
-    public Byte[] getGenom(int number) throws GAException {
+    public byte[] getGenom(int number) throws GAException {
         if (!(number == 0 || number == 1)) throw new GAException("Diploid individual has only two genoms");
         return genoms[number];
     }
 
-    public Byte[] getGenom1() {
+    public byte[] getGenom1() {
         return genoms[0];
     }
 
-    public Byte[] getGenom2() {
+    public byte[] getGenom2() {
         return genoms[1];
     }
 
@@ -100,7 +93,7 @@ public class IDiploidWithTable implements Individual {
         return false;
     }
 
-    public Byte[] moreLikely(Byte[][] gs) {
+    public byte[] moreLikely(byte[][] gs) {
         int[] fs = {0, 0, 0, 0};
         int max = 0;
         for (int i = 0; i < size; i++) {

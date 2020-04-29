@@ -13,7 +13,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 public class GADiploidWithDominance extends GeneticAlgorithm {
-    private DominanceType dt;
+    private final DominanceType dt;
 
     public GADiploidWithDominance(int size, int length, int countOfPoint, double probabilityCrossover,
                                   TypeSelectionParents typeSelectionParents, TypeSelectionSurvival typeSelectionSurvival,
@@ -29,10 +29,10 @@ public class GADiploidWithDominance extends GeneticAlgorithm {
     @Override
     protected void greedyMGA() throws GAException {
         List<Individual> parents = population.getMaximal(2);
-        Byte[] c1 = uniformCrossover(parents.stream().map(wrap(i -> i.getGenom(0))).collect(Collectors.toList()));
-        Byte[] z1 = SBM(c1);
-        Byte[] c2 = uniformCrossover(parents.stream().map(wrap(i -> i.getGenom(1))).collect(Collectors.toList()));
-        Byte[] z2 = SBM(c2);
+        byte[] c1 = uniformCrossover(parents.stream().map(wrap(i -> i.getGenom(0))).collect(Collectors.toList()));
+        byte[] z1 = SBM(c1);
+        byte[] c2 = uniformCrossover(parents.stream().map(wrap(i -> i.getGenom(1))).collect(Collectors.toList()));
+        byte[] z2 = SBM(c2);
         List<Individual> p = new ArrayList<>(population.getPopulation());
         IDiploidWithDominance i = new IDiploidWithDominance(z1, z2, parents.get(0).getChanged(0), parents.get(0).getChanged(1), dt);
         if (!p.contains(i) && i.calcFitness() > p.get(p.size() - 1).calcFitness()) {
@@ -75,10 +75,10 @@ public class GADiploidWithDominance extends GeneticAlgorithm {
     protected void standardBitMutation() throws GAException {
         List<IDiploidWithDominance> children = new ArrayList<>();
         for (Individual ind : pSelector.select(population, population.getSize()/10, typeSelectionParents)) {
-            Byte[] b1 = ind.getGenom(0);
-            Byte[] b2 = ind.getGenom(1);
-            Byte[] child1 = SBM(b1);
-            Byte[] child2 = SBM(b2);
+            byte[] b1 = ind.getGenom(0);
+            byte[] b2 = ind.getGenom(1);
+            byte[] child1 = SBM(b1);
+            byte[] child2 = SBM(b2);
             IDiploidWithDominance i = new IDiploidWithDominance(child1, child2, ind.getChanged(0), ind.getChanged(1), dt);
             if (i.calcFitness() > ind.calcFitness()) {
                 children.add(i);

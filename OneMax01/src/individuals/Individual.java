@@ -12,7 +12,7 @@ public interface Individual {
 
     boolean canChanged();
 
-    Byte[] getGenom(int number) throws GAException;
+    byte[] getGenom(int number) throws GAException;
 
     boolean[] getChanged(int number) throws GAException;
 }
