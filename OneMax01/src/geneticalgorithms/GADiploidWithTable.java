@@ -52,8 +52,8 @@ public class GADiploidWithTable extends GeneticAlgorithm {
         //int secondGamete = ThreadLocalRandom.current().nextInt(4);
         //Byte[] gamete0, gamete1;
         Individual i = new IDiploidWithTable(
-                SBM(p1.moreLikely(new byte[][]{p1.getGenom1(), p1.getGenom2(), newGenoms0[0], newGenoms0[1]})),
-                SBM(p2.moreLikely(new byte[][]{p2.getGenom1(), p2.getGenom2(), newGenoms1[0], newGenoms1[1]})),
+                SBM(p1.moreLikely(new byte[][]{p1.getGenom(0), p1.getGenom(1), newGenoms0[0], newGenoms0[1]})),
+                SBM(p2.moreLikely(new byte[][]{p2.getGenom(0), p2.getGenom(1), newGenoms1[0], newGenoms1[1]})),
                 p1.getVector());
         List<Individual> p = new ArrayList<>(population.getPopulation());
         if (!p.contains(i) && i.calcFitness() > p.get(p.size() - 1).calcFitness()) {

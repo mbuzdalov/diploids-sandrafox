@@ -7,7 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class IDiploidWithTable implements Individual {
+public final class IDiploidWithTable implements Individual {
     private final byte[][] genoms;
     private int fitness = -1;
     private int age;
@@ -73,20 +73,14 @@ public class IDiploidWithTable implements Individual {
         return genoms[number];
     }
 
-    public byte[] getGenom1() {
-        return genoms[0];
-    }
-
-    public byte[] getGenom2() {
-        return genoms[1];
-    }
-
     public boolean[] getChanged(int number) {
         throw new UnsupportedOperationException("MB: I don't get what this should mean, so I drop it");
     }
 
     public boolean equals(Object o) {
-        if (o.getClass() == IDiploidWithTable.class) {
+        if (this == o) return true;
+        if (o == null) return false;
+        if (o.getClass() == getClass()) {
             IDiploidWithTable i = (IDiploidWithTable) o;
             return Arrays.deepEquals(this.genoms, i.genoms) && Arrays.equals(this.vector, i.vector);
         }
