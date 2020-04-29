@@ -109,9 +109,10 @@ public class Visualizer extends ApplicationFrame {
         final XYSeries gan = new XYSeries("(2 + 1)1/N");
         final XYSeries ga2n = new XYSeries("(2 + 1)1/2N");
 
+        System.out.println("[{}");
         final int nRuns = 10;
-        for (int N = 100; N <= 1000; N += 100) {
-            final int n = N;
+        for (int N = 4; N <= 12; ++N) {
+            final int n = 1 << N;
             addGenerationsToDataSet(() -> new GADiploidWithTable(1, n, -1, 0.5, TypeSelectionParents.SUS,
                     TypeSelectionSurvival.FITNESS, AlgorithmType.SBM, generateVector(n, 0.1), 1.0 / n),
                     ean, nRuns, 2 * n);
@@ -136,6 +137,7 @@ public class Visualizer extends ApplicationFrame {
 //                    1 / (double)(2 * N));
             //addGenerationsToDataSet(ga, ea2n, 2 * N);
         }
+        System.out.println("]");
 
         final XYSeriesCollection dataset = new XYSeriesCollection( );
         dataset.addSeries(ean);
@@ -185,7 +187,7 @@ public class Visualizer extends ApplicationFrame {
                 ga.newGeneration();
                 generations++;
             }
-            System.out.println(generations);
+            System.out.println(",{\"algorithm\":\"" + s.getKey() + "\",\"fitness\":" + maxValue + ",\"runtime\":" + generations + "}");
             sumGenerations += generations;
         }
         s.add(maxValue, sumGenerations / nRuns);
